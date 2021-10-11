@@ -2,9 +2,11 @@ const express = require("express");
 const loggerMiddleWare = require("morgan");
 const corsMiddleWare = require("cors");
 const { PORT } = require("./config/constants");
-const authRouter = require("./routers/auth");
-// const authMiddleWare = require("./auth/middleware");
 const bodyParserMiddleWare = express.json();
+
+const authRouter = require("./routers/auth");
+const spaceRouter = require("./routers/space");
+const eventRouter = require("./routers/event");
 
 const app = express();
 
@@ -20,6 +22,8 @@ if (process.env.DELAY) {
 // Routers
 
 app.use("/", authRouter);
+app.use("/spaces", spaceRouter);
+app.use("/events", eventRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
