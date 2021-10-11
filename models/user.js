@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       user.hasOne(models.space);
       user.belongsToMany(models.event, {
-        through: "userEvent",
+        through: "userAttendance",
         foreignKey: "eventId",
       });
     }
