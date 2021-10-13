@@ -53,4 +53,28 @@ router.post("/", authMiddleware, async (req, res, next) => {
   }
 });
 
+router.get("/", async (req, res, next) => {
+  try {
+    const events = await Event.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+    res.json(events);
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).send({ message: "Something went wrong, sorry" });
+  }
+});
+router.get("/:id", async (req, res, next) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const event = await Event.findByPk(eventId);
+    if (!event) {
+      return res.status(404).send({ message: "event not found" });
+    }
+    res.json(event);
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).send({ message: "Something went wrong, sorry" });
+  }
+});
 module.exports = router;
