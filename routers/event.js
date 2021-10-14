@@ -6,8 +6,9 @@ const Space = require("../models").space;
 const router = new Router();
 
 router.post("/", authMiddleware, async (req, res, next) => {
-  const spaceId = await Space.findOne({ where: { userId: req.user.id } }).id;
-  console.log("Space id is: ", spaceId);
+  const space = await Space.findOne({ where: { userId: req.user.id } });
+  console.log("Space id is: ", space);
+  const spaceId = space.id;
   const {
     title,
     description,
