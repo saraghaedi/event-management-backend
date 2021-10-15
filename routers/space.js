@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Space = require("../models").space;
 const authMiddleware = require("../auth/middleware");
+const Event = require("../models").event;
 
 const router = new Router();
 
@@ -20,6 +21,23 @@ router.post("/", authMiddleware, async (req, res, next) => {
       userId,
     });
     res.status(201).json(newSpace);
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).send({ message: "Something went wrong, sorry" });
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+    const spaceId = parseInt(req.params.id);
+    const space = await Space.findOne({
+      where: { id: spaceId },
+      include: [Event],
+    });
+    if (!space) {
+      return res.status(404).send({ message: "space not found" });
+    }
+    res.json(space);
   } catch (e) {
     console.log(e.message);
     return res.status(500).send({ message: "Something went wrong, sorry" });

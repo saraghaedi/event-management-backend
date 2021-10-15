@@ -7,7 +7,6 @@ const router = new Router();
 
 router.post("/", authMiddleware, async (req, res, next) => {
   const space = await Space.findOne({ where: { userId: req.user.id } });
-  console.log("Space id is: ", space);
   const spaceId = space.id;
   const {
     title,
@@ -18,6 +17,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
     capacity,
     is_online,
     location,
+    price,
   } = req.body;
 
   if (
@@ -27,12 +27,13 @@ router.post("/", authMiddleware, async (req, res, next) => {
     !end_date ||
     !capacity ||
     !is_online ||
-    !location
+    !location ||
+    !price
   ) {
     return res
       .status(400)
       .send(
-        "Please provide a valid title, description, description,imageUrl, start_date, end_date, capacity, is_online, location and spaceId "
+        "Please provide a valid title, description, description,imageUrl, start_date, end_date, capacity, is_online, location, price and spaceId "
       );
   }
   try {
@@ -46,6 +47,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
       is_online,
       location,
       spaceId,
+      price,
     });
     res.status(201).json(newEvent);
   } catch (e) {

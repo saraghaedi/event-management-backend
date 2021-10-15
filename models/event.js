@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       capacity: { type: DataTypes.INTEGER, allowNull: false },
       is_online: { type: DataTypes.BOOLEAN, allowNull: false },
       location: { type: DataTypes.TEXT, allowNull: false },
+      price: { type: DataTypes.INTEGER, allowNull: false },
     },
     {
       sequelize,
