@@ -27,9 +27,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
     !start_date ||
     !end_date ||
     !capacity ||
-    !is_online ||
-    !location ||
-    !price
+    !location
   ) {
     return res
       .status(400)
@@ -103,11 +101,43 @@ router.put("/:id/buyTicket", authMiddleware, async (req, res, next) => {
     const updatedEvent = await eventToBeUpdated.update({
       capacity,
     });
-    const userAttend = await UserAttendance.create({
-      userId,
-      eventId,
+
+    console.log("im here 0");
+
+    const nrOfTickets = Array.from("x".repeat(amount));
+    // const promises = nrOfTickets.map(async (x) => {
+    //   return await UserAttendance.create({
+    //     userId,
+    //     eventId,
+    //   });
+    // });
+    const results = [];
+
+    for (i = 0; i < amount; i++) {
+      results.push(
+        await UserAttendance.create({
+          userId,
+          eventId,
+        })
+      );
+    }
+
+    console.log("im here");
+
+    // await Promise.all(promises);
+
+    const ticketsForEvent = await UserAttendance.findAll({
+      where: { userId, eventId },
+      include: [Event],
     });
-    res.json(updatedEvent);
+    console.log("im here 2");
+
+    const cleanTicket = ticketsForEvent[0].get({ plain: true });
+
+    res.json({
+      event: updatedEvent,
+      userAttend: { ...cleanTicket, quantity: ticketsForEvent.length },
+    });
   } catch (e) {
     console.log(e.message);
     return res.status(500).send({ message: "Something went wrong, sorry" });
