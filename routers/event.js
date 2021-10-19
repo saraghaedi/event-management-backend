@@ -3,6 +3,7 @@ const authMiddleware = require("../auth/middleware");
 const Event = require("../models").event;
 const Space = require("../models").space;
 const UserAttendance = require("../models").userAttendance;
+const User = require("../models").user;
 
 const router = new Router();
 
@@ -102,15 +103,7 @@ router.put("/:id/buyTicket", authMiddleware, async (req, res, next) => {
       capacity,
     });
 
-    console.log("im here 0");
-
     const nrOfTickets = Array.from("x".repeat(amount));
-    // const promises = nrOfTickets.map(async (x) => {
-    //   return await UserAttendance.create({
-    //     userId,
-    //     eventId,
-    //   });
-    // });
     const results = [];
 
     for (i = 0; i < amount; i++) {
@@ -122,15 +115,10 @@ router.put("/:id/buyTicket", authMiddleware, async (req, res, next) => {
       );
     }
 
-    console.log("im here");
-
-    // await Promise.all(promises);
-
     const ticketsForEvent = await UserAttendance.findAll({
       where: { userId, eventId },
       include: [Event],
     });
-    console.log("im here 2");
 
     const cleanTicket = ticketsForEvent[0].get({ plain: true });
 
@@ -143,4 +131,21 @@ router.put("/:id/buyTicket", authMiddleware, async (req, res, next) => {
     return res.status(500).send({ message: "Something went wrong, sorry" });
   }
 });
+
+router.get("/:id/attendance", authMiddleware, async (req, res, next) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const event = await Event.findByPk(eventId, {
+      include: {
+        model: User,
+        attributes: ["name", "email"],
+      },
+    });
+    res.json(event);
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).send({ message: "Something went wrong, sorry" });
+  }
+});
+
 module.exports = router;
