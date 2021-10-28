@@ -6,6 +6,7 @@ const UserAttendance = require("../models").userAttendance;
 const User = require("../models").user;
 const Category = require("../models").category;
 const Sequelize = require("sequelize");
+const EventCategory = require("../models").eventCategory;
 const Op = Sequelize.Op;
 
 const router = new Router();
@@ -22,6 +23,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
     capacity,
     is_online,
     location,
+    categoryId,
     price,
   } = req.body;
 
@@ -51,6 +53,10 @@ router.post("/", authMiddleware, async (req, res, next) => {
       location,
       spaceId,
       price,
+    });
+    const eventCategory = await EventCategory.create({
+      categoryId,
+      eventId: newEvent.id,
     });
     res.status(201).json(newEvent);
   } catch (e) {

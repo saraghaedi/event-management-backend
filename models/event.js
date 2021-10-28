@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "eventId",
       });
       event.belongsToMany(models.category, {
-        through: "eventCategory",
+        through: "eventCategories",
         foreignKey: "eventId",
       });
     }
